@@ -1,0 +1,49 @@
+{
+  "name": "phasmo-ev-overlay",
+  "version": "0.0.1",
+  "author": {
+    "name": "Strato"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BThiebaut/phasmo-ev-overlay.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "phasmophobia",
+    "overlay",
+    "evidence"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build-ts": "tsc",
+    "build-html": "copy src\\phasmo.html dist\\phasmo.html",
+    "start": "yarn build-ts && yarn build-html && electron dist/index.js"
+  },
+  "files": [
+    "dist/index.d.ts",
+    "dist/index.js",
+    "dist/index.js.map"
+  ],
+  "devDependencies": {
+    "@types/node": "12.x.x",
+    "@types/throttle-debounce": "2.x.x",
+    "electron": "10.x.x",
+    "prebuildify": "4.x.x",
+    "ts-node": "9.x.x",
+    "typescript": "4.x.x"
+  },
+  "dependencies": {
+    "electron-overlay-window": "^2.0.1",
+    "node-gyp-build": "4.x.x",
+    "throttle-debounce": "3.x.x"
+  },
+  "gypfile": true,
+  "engines": {
+    "node": ">= 12"
+  },
+  "peerDependencies": {
+    "electron": ">= 10"
+  }
+}
