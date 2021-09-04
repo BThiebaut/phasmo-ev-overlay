@@ -4,6 +4,7 @@
   "author": {
     "name": "Strato"
   },
+  "description": "Simple phasmophobia evidence overlay using shortcuts",
   "repository": {
     "type": "git",
     "url": "https://github.com/BThiebaut/phasmo-ev-overlay.git"
@@ -17,9 +18,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build-ts": "tsc",
-    "build-html": "copy src\\phasmo.html dist\\phasmo.html",
-    "start": "yarn build-ts && yarn build-html && electron dist/index.js"
+    "start": "tsc && electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "files": [
     "dist/index.d.ts",
@@ -27,6 +28,11 @@
     "dist/index.js.map"
   ],
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.60",
+    "@electron-forge/maker-deb": "^6.0.0-beta.60",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.60",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.60",
+    "@electron-forge/maker-zip": "^6.0.0-beta.60",
     "@types/node": "12.x.x",
     "@types/throttle-debounce": "2.x.x",
     "electron": "10.x.x",
@@ -36,6 +42,7 @@
   },
   "dependencies": {
     "electron-overlay-window": "^2.0.1",
+    "electron-squirrel-startup": "^1.0.0",
     "node-gyp-build": "4.x.x",
     "throttle-debounce": "3.x.x"
   },
@@ -45,5 +52,32 @@
   },
   "peerDependencies": {
     "electron": ">= 10"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "phasmo_ev_overlay"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }

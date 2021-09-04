@@ -1,5 +1,6 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import { overlayWindow } from 'electron-overlay-window'
+import * as path from 'path';
 
 // https://github.com/electron/electron/issues/25153
 app.disableHardwareAcceleration()
@@ -16,14 +17,10 @@ function createWindow () {
     ...overlayWindow.WINDOW_OPTS
   })
 
-  window.loadFile('phasmo.html')
+  window.loadFile(path.join(__dirname, '../src/phasmo.html'));
 
   // NOTE: if you close Dev Tools overlay window will lose transparency 
   //window.webContents.openDevTools({ mode: 'detach', activate: false })
-
-  window.webContents.on('devtools-closed', () => {
-    app.quit();
-  })
 
   window.setIgnoreMouseEvents(true)
 
@@ -80,14 +77,13 @@ function registerHooks () {
   globalShortcut.register('Shift + Plus', () => { app.quit(); });
 }
 
-app.on('ready', () => {
-  setTimeout(
-    createWindow,
-    process.platform === 'linux' ? 1000 : 0 // https://github.com/electron/electron/issues/16809
-  )
-})
+app.on('ready', createWindow)
 
 app.on('will-quit', () => {
   // Supprime tous les raccourcis.
   globalShortcut.unregisterAll()
 })
+
+overlayWindow.on('detach', () => {
+  app.quit();
+});
