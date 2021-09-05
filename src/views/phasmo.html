@@ -2,46 +2,11 @@
 <head>
   <title>Phasmo overlay</title>
   <meta charset="UTF-8">
-  <style>
-    #phasmo-overlay {
-      background-color: rgba(54, 54, 54, 0.5);
-      color: #fff;
-      font-size: 16px;
-      height : auto;
-      width : max-content;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    #evidences-container {
-      border: 2px solid #fff;
-      border-color: #fff;
-      border-radius: 10px;
-      padding: 10px;
-      width: max-content;
-    }
-
-    .active {
-      fill: #00ff00 !important;
-    }
-
-    .impossible {
-      fill : #ff0000 !important;
-    }
-
-    .evidence-svg-container, .other-svg-container {
-      height: auto;
-      display: inline-block;
-    }
-
-    .evidence-svg-container svg, .other-svg-container svg {
-      height: 34px;
-      fill: #fff;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/style.css">"
+  <link rel="stylesheet" href="../assets/css/evidences.css">"
 </head>
 <body style="padding: 0; margin: 0;">
-  <div id="phasmo-overlay">
+  <div id="evidences-overlay">
     <div id="evidences-container">
       <!-- EMF 5 SVG  -->
       <div class="evidence-svg-container">
@@ -3512,203 +3477,29 @@
     -->
     <div id="entity-list">Empty</div>
   </div>
-  
+  <!--
+  <div id="map-overlay">
+    <img src="../assets/svg/asylum.svg" alt="svg map" class="svg-map">
+  </div>
+  -->
+
+  <script src="../assets/js/Evidences.js"></script>
   <script>
     const electron = require('electron');
-
-    const evidences = {
-      emf    : 1,
-      spirit : 2,
-      writing: 4,
-      orb    : 8,
-      finger : 16,
-      temp   : 32,
-      dots   : 64,
-    };
-
-    
-    const entities = {
-      banshee    : evidences.finger | evidences.orb | evidences.dots,
-      demon      : evidences.finger | evidences.writing | evidences.temp,
-      goryo      : evidences.emf | evidences.finger | evidences.dots,
-      hantu      : evidences.finger | evidences.orb | evidences.temp,
-      jinn       : evidences.emf | evidences.finger | evidences.temp,
-      mare       : evidences.spirit | evidences.orb | evidences.writing,
-      myling     : evidences.emf | evidences.finger | evidences.writing,
-      oni        : evidences.emf | evidences.temp | evidences.dots,
-      phantom    : evidences.spirit | evidences.finger | evidences.dots,
-      poltergeist: evidences.spirit | evidences.finger | evidences.writing,
-      revenant   : evidences.orb | evidences.writing | evidences.temp,
-      shade      : evidences.emf | evidences.writing | evidences.temp,
-      spirit     : evidences.emf | evidences.spirit | evidences.writing,
-      wraith     : evidences.emf | evidences.spirit | evidences.dots,
-      yokai      : evidences.spirit | evidences.orb | evidences.dots,
-      yurei      : evidences.orb | evidences.temp | evidences.dots,
-    };
-
-    const langs = {
-      banshee    : "Banshee",
-      demon      : "Demon",
-      goryo      : "Goryo",
-      hantu      : "Hantu",
-      jinn       : "Djinn",
-      mare       : "Cauchemar",
-      myling     : "Myling",
-      oni        : "Oni",
-      phantom    : "Fantôme",
-      poltergeist: "Poltergeist",
-      revenant   : "Revenant",
-      shade      : "Ombre",
-      spirit     : "Esprit",
-      wraith     : "Spectre",
-      yokai      : "Yokai",
-      yurei      : "Yurei",
-    };
-    
-    var game = {
-      name           : '',
-      map            : '',
-      evidences      : 0,
-      ouija          : false,
-      bone           : false,
-      possEntities   : [],
-      impossEvidences: [],
-      possBits       : 0
-    };
-
-    const _bitCount = (n) => {
-      n = n - ((n >> 1) & 0x55555555)
-      n = (n & 0x33333333) + ((n >> 2) & 0x33333333)
-      return ((n + (n >> 4) & 0xF0F0F0F) * 0x1010101) >> 24
-    };
-
-    const _toggleEvidence = (bit) => {
-      if (_bitCount(game.evidences) < 3 || ((game.evidences & bit) == bit) ){
-        game.evidences ^= bit;
-      }
-    };
-
-    const _calculateEntities = () => {
-      let listEntities = [];
-      for(let entityName in entities){
-        let bitsEntity = entities[entityName];
-        if ( _bitCount(game.evidences) == 0 || (bitsEntity & game.evidences) == game.evidences ){
-          listEntities.push(entityName);
-        }
-      }
-      game.possEntities = listEntities;
-    };
-
-    const _calculateEvidences = () => {
-      let listEvidences = [];
-      game.possBits = 0;
-      for(let evidenceName in evidences){
-        let ev = evidences[evidenceName];
-
-        for(let i in game.possEntities){
-          let entityName = game.possEntities[i];
-          if ( listEvidences.indexOf(evidenceName) < 0 && (entities[entityName] & ev) == ev){
-            listEvidences.push(evidenceName);
-            game.possBits |= ev;
-          }
-        }
-      }
-
-      game.possEvidences = listEvidences;
-    };
-
-    const _drawEntityList = () => {
-      let el = document.getElementById('entity-list');
-      if (_bitCount(game.evidences) > 0){
-        let html = '';
-        for(let i in game.possEntities){
-          let entityName = game.possEntities[i];
-          html += '<span class="entity">'+ langs[entityName] +'</span> - ';
-        }
-        html = html.substr(0, html.length - 3);
-        el.innerHTML = html;
-      }else {
-        el.innerHTML = "";
-      }
-    };
-    
-    const _draw = () => {
-      _calculateEntities();
-      _calculateEvidences();
-
-      for (let evidenceName in evidences){
-        let evidenceBits = evidences[evidenceName];
-        let el = document.getElementById(evidenceName + '-svg');
-        if (game.possEvidences.indexOf(evidenceName) > -1){
-          el.classList.remove('impossible');
-        }else {
-          el.classList.add('impossible');
-        }
-
-        if ((game.evidences & evidenceBits) == evidenceBits){
-          el.classList.add('active');
-        }else {
-          el.classList.remove('active');
-        }
-      }
-
-      /*
-      let elBone = document.getElementById('bone-svg');
-      let elOuija = document.getElementById('ouija-svg');
-      if (game.bone){
-        elBone.classList.add('active');
-      }else {
-        elBone.classList.remove('active');
-      }
-
-      if (game.ouija){
-        elOuija.classList.add('active');
-      }else {
-        elOuija.classList.remove('active');
-      }
-      */
-      _drawEntityList();
-    };
-
-    const _isPossibleSwitch = (bit) => {
-      return _bitCount(game.evidences) == 0 || (game.possBits & bit) == bit;
-    };
-
-    const _reset = () => {
-      game = {
-        name         : '',
-        map          : '',
-        evidences    : 0,
-        ouija        : false,
-        bone         : false,
-        possEntities : [],
-        possEvidences: [],
-      }
-      _draw();
-    };
+    const oEvidences = new Evidences();
 
     electron.ipcRenderer.on('toggle-evidence', (e, evidence) => {
-      if (_isPossibleSwitch(evidences[evidence])){
-        _toggleEvidence(evidences[evidence]);
-        _draw();
+      if (oEvidences.isPossibleSwitch(oEvidences.evidences[evidence])){
+        oEvidences.toggleEvidence(oEvidences.evidences[evidence]);
+        oEvidences.draw();
       }
-    });
-
-    electron.ipcRenderer.on('toggle-bone', (e, evidence) => {
-      game.bone = !game.bone;
-      _draw();
-    });
-
-    electron.ipcRenderer.on('toggle-ouija', (e, evidence) => {
-      game.ouija = !game.ouija;
-      _draw();
     });
 
     electron.ipcRenderer.on('reset-game', (e, state) => {
-      _reset();
+      oEvidences.reset();
     });
 
-    _draw();
+    oEvidences.draw();
   </script>
 </body>
 </html>

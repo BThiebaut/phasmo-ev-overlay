@@ -17,16 +17,17 @@ function createWindow () {
     ...overlayWindow.WINDOW_OPTS
   })
 
-  window.loadFile(path.join(__dirname, '../src/phasmo.html'));
+  window.loadFile(path.join(__dirname, '../src/views/phasmo.html'));
 
   // NOTE: if you close Dev Tools overlay window will lose transparency 
-  //window.webContents.openDevTools({ mode: 'detach', activate: false })
+  window.webContents.openDevTools({ mode: 'detach', activate: false })
 
   window.setIgnoreMouseEvents(true)
 
   registerHooks()
 
-  overlayWindow.attachTo(window, 'Phasmophobia')
+  overlayWindow.attachTo(window, 'Voicemod')
+  //overlayWindow.attachTo(window, 'Phasmophobia')
 }
 
 function registerHooks () {
