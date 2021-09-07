@@ -1,0 +1,47 @@
+#map-overlay {
+  height: 80%;
+  width: 80%;
+  margin: 0 auto;
+}
+
+#map-overlay img {
+  height: 100%;
+  width: 100%;
+}
+
+#map-content {
+  max-width: 100%;
+  max-height: 100%;
+  margin-top: 10px;
+}
+
+#map-content svg {
+  display: block;
+  margin: 0 auto;
+}
+
+#map-list {
+  text-align: center;
+  white-space: nowrap;
+}
+
+#map-list .btn-map {
+  background-color: #555555;
+  border: none;
+  color: white;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+#map-list .btn-map:focus {
+  border: none;
+  outline: 0;
+}
+
+#map-list button.selected {
+  outline: 1px solid #a5a2a2 !important;
+}

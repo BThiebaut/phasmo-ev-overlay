@@ -157,21 +157,6 @@ var Evidences = function(){
       }
     }
   
-    /*
-    let elBone = document.getElementById('bone-svg');
-    let elOuija = document.getElementById('ouija-svg');
-    if (_self.game.bone){
-      elBone.classList.add('active');
-    }else {
-      elBone.classList.remove('active');
-    }
-  
-    if (_self.game.ouija){
-      elOuija.classList.add('active');
-    }else {
-      elOuija.classList.remove('active');
-    }
-    */
     _self.drawEntityList();
   };
 

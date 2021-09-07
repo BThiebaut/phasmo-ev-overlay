@@ -1,12 +1,14 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import { overlayWindow } from 'electron-overlay-window'
 import * as path from 'path';
+import fs = require('fs');
 
 // https://github.com/electron/electron/issues/25153
 app.disableHardwareAcceleration()
 
 let window: BrowserWindow
-
+let maps : any = {};
+let ignoreMouseEvent = true;
 function createWindow () {
   window = new BrowserWindow({
     width: 400,
@@ -17,17 +19,20 @@ function createWindow () {
     ...overlayWindow.WINDOW_OPTS
   })
 
-  window.loadFile(path.join(__dirname, '../src/views/phasmo.html'));
+  window.loadFile(path.join(__dirname, '../src/views/overlay.html'));
 
   // NOTE: if you close Dev Tools overlay window will lose transparency 
   window.webContents.openDevTools({ mode: 'detach', activate: false })
 
-  window.setIgnoreMouseEvents(true)
+  window.setIgnoreMouseEvents(ignoreMouseEvent)
 
   registerHooks()
 
-  overlayWindow.attachTo(window, 'Voicemod')
-  //overlayWindow.attachTo(window, 'Phasmophobia')
+  overlayWindow.attachTo(window, 'Phasmophobia')
+
+  window.webContents.once('dom-ready', () => {
+    loadSvgMaps();
+  })
 }
 
 function registerHooks () {
@@ -63,6 +68,9 @@ function registerHooks () {
   function toggleOuija(){
     window.webContents.send('toggle-ouija', true);
   }
+  function toggleMaps(){
+    window.webContents.send('toggle-maps', true);
+  }
 
   globalShortcut.register('Shift + 0', reset);
   globalShortcut.register('Shift + 1', toggleEmf);
@@ -75,7 +83,33 @@ function registerHooks () {
   //globalShortcut.register('Shift + 8', toggleBone);
   //globalShortcut.register('Shift + 9', toggleOuija);
 
+  globalShortcut.register('Shift + m', () => {
+    toggleMaps();
+    ignoreMouseEvent = !ignoreMouseEvent;
+    window.setIgnoreMouseEvents(ignoreMouseEvent);
+  });
+
   globalShortcut.register('Shift + Plus', () => { app.quit(); });
+}
+
+function loadSvgMaps(){
+  let mapsDir = path.join(__dirname, '../src/assets/svg/maps');
+  var maps : any = {};
+  let nbLoaded = 0;
+  fs.readdir(mapsDir, (err, files) => {
+    if(err === null){
+      for(let i in files){
+        let fileName : string = files[i];
+        fs.readFile(path.join(mapsDir, fileName), "utf8", (errf, data) => {
+          maps[fileName.replace('.svg', '')] = data;
+          if (++nbLoaded == files.length){
+            window.webContents.send('maps-loaded', maps);
+          }
+        });
+        
+      }
+    }
+  });
 }
 
 app.on('ready', createWindow)
