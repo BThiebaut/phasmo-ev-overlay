@@ -8,8 +8,9 @@ var Maps = function(){
 
   this._loadMapsButtons = () => {
     let html = '';
+    let i = 0;
     for(let mapName in _self.maps){
-      html += '<button type="button" class="btn-map" value="'+ mapName +'">'+ mapName +'</button>';
+      html += '<button type="button" id="btn-map-'+ ++i +'" class="btn-map" value="'+ mapName +'">('+ i +') '+ mapName +'</button>';
     }
     document.getElementById('map-list').innerHTML = html;
   };
@@ -20,6 +21,20 @@ var Maps = function(){
       let btn = btns[i];
       btn.onclick = () => { _self._onBtnClick(btn); };
     }
+
+    let shiftPressed = false;
+    let keysMaps = Array.from(Array(document.getElementsByClassName('btn-map').length).keys())
+    keysMaps = keysMaps.map(i => 'Numpad' + (i + 1));
+
+    document.onkeyup = (e) => {
+      console.log(e);
+      if(e.code == 'Escape' || e.code == 'Semicolon'){
+        _self.toggle();
+      }
+      if (keysMaps.indexOf(e.code) > -1){
+        document.getElementById('btn-map-' + e.key).click();
+      }
+    };
   };
 
   this._onBtnClick = (btn) => {
@@ -56,6 +71,9 @@ var Maps = function(){
       _self.isVisislbe = !_self.isVisislbe;
       if (_self.isVisislbe){
         elContainer.classList.remove('d-none');
+        if (document.querySelectorAll('button.selected').length == 0){
+          document.getElementById('btn-map-1').click();
+        }
       }else {
         elContainer.classList.add('d-none');
       }

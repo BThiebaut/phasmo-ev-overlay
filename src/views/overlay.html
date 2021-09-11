@@ -3380,6 +3380,7 @@
   <script src="../assets/js/Maps.js"></script>
   <script>
     const electron = require('electron');
+    const ipc = electron.ipcRenderer;
     const oEvidences = new Evidences();
     const oMaps = new Maps();
 
@@ -3396,6 +3397,7 @@
 
     electron.ipcRenderer.on('toggle-maps', (e, state) => {
       oMaps.toggle();
+      ipc.send('map-toggeled', oMaps.isVisislbe);
     });
 
     electron.ipcRenderer.on('maps-loaded', (e, maps) => {

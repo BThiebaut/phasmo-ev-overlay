@@ -2,15 +2,14 @@ import { app, BrowserWindow, globalShortcut } from 'electron'
 import { overlayWindow } from 'electron-overlay-window'
 import * as path from 'path';
 import fs = require('fs');
+const ipc = require('electron').ipcMain;
 
 // https://github.com/electron/electron/issues/25153
 app.disableHardwareAcceleration()
 
 let window: BrowserWindow
-let ignoreMouseEvent = true;
-let registered = false;
-
-const userConfigFile = path.join(__dirname, '../../../userConfig.json');
+var ignoreMouseEvent = true;
+var registered = false;
 
 function createWindow () {
   window = new BrowserWindow({
@@ -36,30 +35,10 @@ function createWindow () {
   window.webContents.once('dom-ready', () => {
     loadSvgMaps();
   })
-}
 
-function createDefaultUserSc() {
-  let defaultDatas = {
-    'reset'        : 'Shift + 0',
-    'toggleEmf'    : 'Shift + 1',
-    'toggleSpirit' : 'Shift + 2',
-    'toggleFinger' : 'Shift + 3',
-    'toggleOrb'    : 'Shift + 4',
-    'toggleWriting': 'Shift + 5',
-    'toggleTemp'   : 'Shift + 6',
-    'toggleDots'   : 'Shift + 7',
-    'toggleMaps'   : 'm',
-    'exitOverlay'  : 'Shift + Plus',
-  };
-  fs.writeFileSync(userConfigFile, JSON.stringify(defaultDatas, null, 2), {'encoding' : 'utf8'});
-}
-
-function getUserShortcuts(){
-  if (!fs.existsSync(userConfigFile)){
-    createDefaultUserSc();
-  }
-  let userConfigRaw = fs.readFileSync(userConfigFile, {'encoding' : 'utf8'});
-  return JSON.parse(userConfigRaw);
+  ipc.on('map-toggeled', (e, isVisible) => {
+    window.setIgnoreMouseEvents(!isVisible);
+  });
 }
 
 function reset(){
@@ -87,16 +66,8 @@ function toggleTemp(){
 function toggleDots(){
   window.webContents.send('toggle-evidence', 'dots');
 }
-function toggleBone(){
-  window.webContents.send('toggle-bone', true);
-}
-function toggleOuija(){
-  window.webContents.send('toggle-ouija', true);
-}
 function toggleMaps(){
   window.webContents.send('toggle-maps', true);
-  ignoreMouseEvent = !ignoreMouseEvent;
-  window.setIgnoreMouseEvents(ignoreMouseEvent);
 }
 function exitOverlay(){
   app.quit(); 
@@ -114,12 +85,13 @@ function registerHooks () {
     globalShortcut.register('Shift + 5', toggleWriting);
     globalShortcut.register('Shift + 6', toggleTemp);
     globalShortcut.register('Shift + 7', toggleDots);
-    globalShortcut.register('Shift + m', toggleMaps);
+
+    globalShortcut.register('m', toggleMaps);
+    
     globalShortcut.register('Shift + Plus', exitOverlay);
 
     registered = true;
   }
-
 }
 
 function loadSvgMaps(){
