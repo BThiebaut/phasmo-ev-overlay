@@ -12,4 +12,5 @@ Shift + 4 : toggle Orb
 Shift + 5 : toggle Finger  
 Shift + 6 : toggle Temp  
 Shift + 7 : toggle Dots  
+m : toggle maps
 Shift + Plus : Quit overlay  
