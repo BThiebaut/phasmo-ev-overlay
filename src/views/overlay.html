@@ -3390,6 +3390,11 @@
         oEvidences.draw();
       }
     });
+    
+    electron.ipcRenderer.on('toggle-exclude', (e, evidence) => {
+        oEvidences.toggleExclude(oEvidences.evidences[evidence]);
+        oEvidences.draw();
+    });
 
     electron.ipcRenderer.on('reset-game', (e, state) => {
       oEvidences.reset();

@@ -54,13 +54,26 @@ var Evidences = function(){
     name           : '',
     map            : '',
     evidences      : 0,
+    excludes       : 0,
     ouija          : false,
     bone           : false,
     possEntities   : [],
     impossEvidences: [],
     possBits       : 0
   };
+
+  this._and = (bit1, bit2) => {
+    return (bit1 & bit2) == bit2;
+  }
   
+  this._not = (bit1, bit2) => {
+    return (bit1 & bit2) != bit2;
+  }
+
+  this._notExclude = (bit) => {
+    return _self._bitCount(_self.game.excludes) == 0 || _self._not(bit, _self.game.excludes);
+  }
+
   this._bitCount = (n) => {
     n = n - ((n >> 1) & 0x55555555)
     n = (n & 0x33333333) + ((n >> 2) & 0x33333333)
@@ -72,8 +85,16 @@ var Evidences = function(){
     let listEntities = [];
     for(let entityName in _self.entities){
       let bitsEntity = _self.entities[entityName];
-      if (_self._bitCount(_self.game.evidences) == 0 || (bitsEntity & _self.game.evidences) == _self.game.evidences){
+      if (_self._bitCount(_self.game.evidences) == 0 || ( _self._and(bitsEntity, _self.game.evidences ) )) {
         listEntities.push(entityName);
+      }
+    }
+
+    for (let entityIdx in listEntities){
+      let entityName = listEntities[entityIdx];
+      let bitsEntity = _self.entities[entityName];
+      if (_self._bitCount(_self.game.excludes) > 0 && ( _self._and(bitsEntity, _self.game.excludes ) )) {
+        listEntities.splice(entityIdx, 1);
       }
     }
     _self.game.possEntities = listEntities;
@@ -87,7 +108,7 @@ var Evidences = function(){
   
       for(let i in _self.game.possEntities){
         let entityName = _self.game.possEntities[i];
-        if (listEvidences.indexOf(evidenceName) < 0 && (_self.entities[entityName] & ev) == ev){
+        if (listEvidences.indexOf(evidenceName) < 0 && _self._and(_self.entities[entityName], ev)){
           listEvidences.push(evidenceName);
           _self.game.possBits |= ev;
         }
@@ -127,14 +148,23 @@ var Evidences = function(){
   };
   
   this.toggleEvidence = (bit) => {
-    if (_self._bitCount(_self.game.evidences) < 3 || ((_self.game.evidences & bit) == bit) ){
+    if (_self._bitCount(_self.game.evidences) < 3 || _self._and(_self.game.evidences, bit)){
       _self.game.evidences ^= bit;
+      if ( _self._and(_self.game.excludes, bit) ){
+        _self.game.excludes ^= bit;
+      }
+    }
+  };
+  
+  this.toggleExclude = (bit) => {
+    if ( (_self.game.evidences & bit) != bit ){
+      _self.game.excludes ^= bit;
     }
   };
   
   
   this.isPossibleSwitch = (bit) => {
-    return _self._bitCount(_self.game.evidences) == 0 || (_self.game.possBits & bit) == bit;
+    return _self._bitCount(_self.game.evidences) == 0 || _self._and(_self.game.possBits, bit);
   };
 
   this.draw = () => {
@@ -150,10 +180,16 @@ var Evidences = function(){
         el.classList.add('impossible');
       }
   
-      if ((_self.game.evidences & evidenceBits) == evidenceBits){
+      if ( _self._and(_self.game.evidences, evidenceBits) ){
         el.classList.add('active');
       }else {
         el.classList.remove('active');
+      }
+
+      if (_self._and(_self.game.excludes, evidenceBits)){
+        el.classList.add('excluded');
+      }else {
+        el.classList.remove('excluded');
       }
     }
   

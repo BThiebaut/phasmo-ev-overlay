@@ -20,8 +20,12 @@
   fill: #00ff00 !important;
 }
 
-.impossible {
+.impossible, .impossible.excluded {
   fill : #ff0000 !important;
+}
+
+.excluded {
+  fill : #f08000 !important;
 }
 
 .evidence-svg-container, .other-svg-container {
