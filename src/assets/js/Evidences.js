@@ -48,6 +48,13 @@ var Evidences = function(){
     wraith     : "Spectre",
     yokai      : "Yokai",
     yurei      : "Yurei",
+    emf        : "emf",
+    spirit     : "spirit",
+    writing    : "écriture",
+    orb        : "orbe",
+    finger     : "empreinte",
+    temp       : "température",
+    dots       : "dots",
   };
   
   this.game = {
@@ -97,6 +104,7 @@ var Evidences = function(){
         listEntities.splice(entityIdx, 1);
       }
     }
+
     _self.game.possEntities = listEntities;
   };
   
@@ -114,19 +122,35 @@ var Evidences = function(){
         }
       }
     }
-  
+
     _self.game.possEvidences = listEvidences;
   };
   
-  this.drawEntityList = () => {
+  this.drawEntityList = (possEvidencesList) => {
     let el = document.getElementById('entity-list');
-    if (_self._bitCount(_self.game.evidences) > 0){
+    if (_self._bitCount(_self.game.evidences) > 0 || _self._bitCount(_self.game.excludes) > 0){
       let html = '';
       for(let i in _self.game.possEntities){
         let entityName = _self.game.possEntities[i];
-        html += '<span class="entity">'+ _self.langs[entityName] +'</span> - ';
+        let evName = '';
+        if (_self._bitCount(_self.game.evidences) == 2){
+          for(let evidence of possEvidencesList){
+            if (_self._and(_self.entities[entityName], _self.evidences[evidence])){
+              evName = ' (' + _self.langs[evidence] + ')';
+              break;
+            }
+          }
+        }
+        let dist = evName == '' ? 4 : 2;
+        let sep = i > 0 && i % dist == 0 ? '<br/>' : ' - ';
+
+        let idx = parseInt(i) + 1;
+        if (idx == _self.game.possEntities.length){
+          sep = '';
+        }
+
+        html += '<span class="entity">'+ _self.langs[entityName] + evName + '</span>'+ sep;
       }
-      html = html.substr(0, html.length - 3);
       el.innerHTML = html;
     }else {
       el.innerHTML = "";
@@ -157,7 +181,7 @@ var Evidences = function(){
   };
   
   this.toggleExclude = (bit) => {
-    if ( (_self.game.evidences & bit) != bit ){
+    if ( _self._not(_self.game.evidences, bit) ){
       _self.game.excludes ^= bit;
     }
   };
@@ -170,30 +194,40 @@ var Evidences = function(){
   this.draw = () => {
     _self._calculateEntities();
     _self._calculateEvidences();
-  
+    let possEvidencesList = [];
+
     for (let evidenceName in _self.evidences){
       let evidenceBits = _self.evidences[evidenceName];
       let el = document.getElementById(evidenceName + '-svg');
+      let poss, active, exclu = false;
+      
       if (_self.game.possEvidences.indexOf(evidenceName) > -1){
         el.classList.remove('impossible');
+        poss = true;
       }else {
         el.classList.add('impossible');
       }
   
       if ( _self._and(_self.game.evidences, evidenceBits) ){
         el.classList.add('active');
+        active = true;
       }else {
         el.classList.remove('active');
       }
 
       if (_self._and(_self.game.excludes, evidenceBits)){
         el.classList.add('excluded');
+        exclu = true;
       }else {
         el.classList.remove('excluded');
       }
+
+      if (poss && !active && !exclu){
+        possEvidencesList.push(evidenceName);
+      }
     }
-  
-    _self.drawEntityList();
+
+    _self.drawEntityList(possEvidencesList);
   };
 
 }

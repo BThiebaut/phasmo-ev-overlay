@@ -24,14 +24,13 @@ function createWindow () {
   window.loadFile(path.join(__dirname, '../src/views/overlay.html'));
 
   // NOTE: if you close Dev Tools overlay window will lose transparency 
-  window.webContents.openDevTools({ mode: 'detach', activate: false })
+  //window.webContents.openDevTools({ mode: 'detach', activate: false })
 
   window.setIgnoreMouseEvents(ignoreMouseEvent)
 
   registerHooks()
 
-  overlayWindow.attachTo(window, 'Voicemod')
-  //overlayWindow.attachTo(window, 'Phasmophobia')
+  overlayWindow.attachTo(window, 'Phasmophobia')
 
   window.webContents.once('dom-ready', () => {
     loadSvgMaps();
@@ -73,6 +72,7 @@ function registerHooks () {
     globalShortcut.register('Shift + 6', () => { toggleEvidence('temp') });
     globalShortcut.register('Shift + 7', () => { toggleEvidence('dots') });
 
+    /* TODO : Make exlude work
     globalShortcut.register('Ctrl + 1', () => { toggleExclude('emf') });
     globalShortcut.register('Ctrl + 2', () => { toggleExclude('spirit') });
     globalShortcut.register('Ctrl + 3', () => { toggleExclude('finger') });
@@ -80,6 +80,7 @@ function registerHooks () {
     globalShortcut.register('Ctrl + 5', () => { toggleExclude('writing') });
     globalShortcut.register('Ctrl + 6', () => { toggleExclude('temp') });
     globalShortcut.register('Ctrl + 7', () => { toggleExclude('dots') });
+    */
 
     globalShortcut.register('m', toggleMaps);
     

@@ -20,11 +20,16 @@
   fill: #00ff00 !important;
 }
 
-.impossible, .impossible.excluded {
+.impossible {
   fill : #ff0000 !important;
 }
 
-.excluded {
+.excluded:not(.impossible) {
+  /*stroke : #f08000 !important;*/
+  filter: drop-shadow(1px 1px 0px #f08000) drop-shadow(-1px 1px 0px #f08000) drop-shadow(1px -1px 0px #f08000) drop-shadow(-1px -1px 0px #f08000);
+}
+
+.impossible.excluded {
   fill : #f08000 !important;
 }
 
