@@ -31,7 +31,7 @@ var Evidences = function(){
     yurei      : _self.evidences.orb | _self.evidences.temp | _self.evidences.dots,
   };
   
-  this.langs = {
+  this.entitieslangs = {
     banshee    : "Banshee",
     demon      : "Demon",
     goryo      : "Goryo",
@@ -48,6 +48,9 @@ var Evidences = function(){
     wraith     : "Spectre",
     yokai      : "Yokai",
     yurei      : "Yurei",
+  };
+
+  this.evidenceslangs = {
     emf        : "emf",
     spirit     : "spirit",
     writing    : "écriture",
@@ -55,7 +58,7 @@ var Evidences = function(){
     finger     : "empreinte",
     temp       : "température",
     dots       : "dots",
-  };
+  }
   
   this.game = {
     name           : '',
@@ -136,7 +139,7 @@ var Evidences = function(){
         if (_self._bitCount(_self.game.evidences) == 2){
           for(let evidence of possEvidencesList){
             if (_self._and(_self.entities[entityName], _self.evidences[evidence])){
-              evName = ' (' + _self.langs[evidence] + ')';
+              evName = ' (' + _self.evidenceslangs[evidence] + ')';
               break;
             }
           }
@@ -149,7 +152,7 @@ var Evidences = function(){
           sep = '';
         }
 
-        html += '<span class="entity">'+ _self.langs[entityName] + evName + '</span>'+ sep;
+        html += '<span class="entity">'+ _self.entitieslangs[entityName] + evName + '</span>'+ sep;
       }
       el.innerHTML = html;
     }else {
