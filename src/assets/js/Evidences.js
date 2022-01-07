@@ -29,6 +29,11 @@ var Evidences = function(){
     wraith     : _self.evidences.emf | _self.evidences.spirit | _self.evidences.dots,
     yokai      : _self.evidences.spirit | _self.evidences.orb | _self.evidences.dots,
     yurei      : _self.evidences.orb | _self.evidences.temp | _self.evidences.dots,
+    obake      : _self.evidences.emf | _self.evidences.finger | _self.evidences.orb,
+    onryo      : _self.evidences.spirit | _self.evidences.orb | _self.evidences.temp,
+    raiju      : _self.evidences.emf | _self.evidences.orb | _self.evidences.dots,
+    twins      : _self.evidences.emf | _self.evidences.spirit | _self.evidences.temp,
+    mimic      : _self.evidences.spirit | _self.evidences.finger | _self.evidences.temp
   };
   
   this.entitieslangs = {
@@ -48,6 +53,11 @@ var Evidences = function(){
     wraith     : "Spectre",
     yokai      : "Yokai",
     yurei      : "Yurei",
+    obake      : "Obake",
+    onryo      : "Onryo",
+    raiju      : "Raiju",
+    twins      : "Les jumeaux",
+    mimic      : "Mimic"
   };
 
   this.evidenceslangs = {
