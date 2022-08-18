@@ -33,7 +33,10 @@ var Evidences = function(){
     onryo      : _self.evidences.spirit | _self.evidences.orb | _self.evidences.temp,
     raiju      : _self.evidences.emf | _self.evidences.orb | _self.evidences.dots,
     twins      : _self.evidences.emf | _self.evidences.spirit | _self.evidences.temp,
-    mimic      : _self.evidences.spirit | _self.evidences.finger | _self.evidences.temp
+    mimic      : _self.evidences.spirit | _self.evidences.finger | _self.evidences.temp,
+    moroi      : _self.evidences.spirit | _self.evidences.writing | _self.evidences.temp,
+    deogen     : _self.evidences.spirit | _self.evidences.writing | _self.evidences.dots,
+    thaye      : _self.evidences.orb | _self.evidences.writing | _self.evidences.dots
   };
   
   this.entitieslangs = {
@@ -57,7 +60,10 @@ var Evidences = function(){
     onryo      : "Onryo",
     raiju      : "Raiju",
     twins      : "Les jumeaux",
-    mimic      : "Mimic"
+    mimic      : "Mimic",
+    moroi      : "Moroi",
+    deogen     : "Deogen",
+    thaye      : "Thaye"
   };
 
   this.evidenceslangs = {
