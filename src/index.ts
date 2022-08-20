@@ -31,6 +31,7 @@ function createWindow () {
   registerHooks()
 
   overlayWindow.attachTo(window, 'Phasmophobia')
+  //overlayWindow.attachTo(window, 'GoXLR App')
 
   window.webContents.once('dom-ready', () => {
     loadSvgMaps();
